@@ -37,7 +37,7 @@ class StudentSerializer(serializers.ModelSerializer):
 class FacultySerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
-        fields = ['email', 'password', 'role', 'branch', 'year', 'sem', 'section', 'subject_code', 'subject']
+        fields = ['email', 'password', 'role', 'fname','branch', 'year', 'sem', 'section', 'subject_code', 'subject']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):

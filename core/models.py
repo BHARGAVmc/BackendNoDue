@@ -19,6 +19,7 @@ class Faculty(models.Model):
     role = models.CharField(max_length=10, default='faculty')
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
+    fname = models.CharField(max_length=100, null=True, blank=True)
     branch = models.CharField(max_length=50, null=True, blank=True)
     year = models.CharField(max_length=10, null=True, blank=True)
     sem = models.CharField(max_length=10, null=True, blank=True)
