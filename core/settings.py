@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-gpel!f-i!wxm(x07saku(l=%3de$0_rmr(!(*6g#omk8eg+z^c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.0.134']
 
 
 # Application definition
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'authentication',
     'corsheaders', 
     'otp',
+    'core',
 ]
 
 MIDDLEWARE = [
