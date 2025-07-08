@@ -22,4 +22,5 @@ urlpatterns = [
     path('auth/', include('authentication.urls')),
     path('student/', include('studentip.urls')),
     path('otp/',include('otp.urls')),
+    path('details/',include('sdetailsdash.urls')),
 ]

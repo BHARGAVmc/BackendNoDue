@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.contrib.auth.hashers import check_password
 from rest_framework import status
 from core.models import Student
 
@@ -8,11 +9,10 @@ class UpdateStudentDetailsView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
 
-        # Try to fetch student safely
-        student = Student.objects.filter(email=email, password=password).first()
+        student = Student.objects.filter(email=email).first()
 
-        if not student:
-            return Response({"error": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
+        if not student or not check_password(password, student.password):
+            return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Update only these fields
         student.roll_no = request.data.get('roll_no', student.roll_no)
