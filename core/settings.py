@@ -45,6 +45,10 @@ INSTALLED_APPS = [
     'sdetailsdash',
     'corsheaders', 
     'otp',
+    'forgot',
+    'faculty_input',
+    'facultydash',
+    'fdetailsdash',
     'core',
 ]
 

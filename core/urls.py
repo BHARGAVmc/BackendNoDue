@@ -21,6 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')),
     path('student/', include('studentip.urls')),
+    path('fpassword/',include('forgot.urls')),
+    path('f_input/', include('faculty_input.urls')),
     path('otp/',include('otp.urls')),
     path('details/',include('sdetailsdash.urls')),
 ]
