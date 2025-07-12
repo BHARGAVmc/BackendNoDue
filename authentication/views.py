@@ -89,7 +89,6 @@ class SignupView(APIView):
         except IntegrityError:
             return Response({"error": "Email already exists. Try logging in."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Now: Separate and store in Student or Faculty
         if role == 'student':
             serializer = StudentSerializer(data=request.data)
         elif role == 'faculty':
@@ -108,13 +107,12 @@ class SignupView(APIView):
             }, status=status.HTTP_201_CREATED)
 
         else:
-            # If storing in student/faculty failed, rollback login creation
             Login.objects.filter(email=email).delete()
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(APIView):
-    authentication_classes = []  # Disable default auth
+    authentication_classes = []
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -125,22 +123,32 @@ class LoginView(APIView):
             return Response({"error": "Email and password are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Lookup Login table only with email
             login_user = Login.objects.get(email=email)
         except Login.DoesNotExist:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        # Validate password
         if not check_password(password, login_user.password):
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        # Fetch full user profile based on role from login_user
         role = login_user.role
+
         try:
             if role == "student":
                 user = Student.objects.get(email=email)
+
+                if not all([user.roll_no, user.branch, user.year, user.semester, user.section]):
+                    return Response({
+                        "message": "Incomplete student profile",
+                        "user": {
+                            "email": user.email,
+                            "role": role
+                        },
+                        "profile_complete": False
+                    }, status=status.HTTP_200_OK)
+
             elif role == "faculty":
                 user = Faculty.objects.get(email=email)
+
             else:
                 return Response({"error": "Invalid role in Login table"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -148,8 +156,9 @@ class LoginView(APIView):
                 "message": "Login successful",
                 "user": {
                     "email": user.email,
-                    "role": user.role
-                }
+                    "role": role
+                },
+                "profile_complete": True
             }, status=status.HTTP_200_OK)
 
         except (Student.DoesNotExist, Faculty.DoesNotExist):

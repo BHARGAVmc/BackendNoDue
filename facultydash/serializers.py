@@ -9,11 +9,11 @@ class FacultySubjectSerializer(serializers.ModelSerializer):
         model = FacultySubject
         fields = ['email', 'branch', 'year', 'semester', 'section', 'subject_code', 'subject_name']
 
-    def create(self, validated_data):
-        email = validated_data.pop('email')
-        try:
-            faculty = Faculty.objects.get(email=email)
-        except Faculty.DoesNotExist:
-            raise serializers.ValidationError("Faculty with this email does not exist")
+    # def create(self, validated_data):
+    #     email = validated_data.pop('email')
+    #     try:
+    #         faculty = Faculty.objects.get(email=email)
+    #     except Faculty.DoesNotExist:
+    #         raise serializers.ValidationError("Faculty with this email does not exist")
 
-        return FacultySubject.objects.create(faculty=faculty, **validated_data)
+    #     return FacultySubject.objects.create(faculty=faculty, **validated_data)

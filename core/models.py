@@ -16,7 +16,7 @@ class Student(models.Model):
     roll_no = models.CharField(max_length=20, null=True, blank=True)
     branch = models.CharField(max_length=50, null=True, blank=True)
     year = models.CharField(max_length=10, null=True, blank=True)
-    sem = models.CharField(max_length=10, null=True, blank=True)
+    semester = models.CharField(max_length=10, null=True, blank=True)
     section = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
@@ -31,3 +31,8 @@ class Faculty(models.Model):
     def __str__(self):
         return self.email
 
+class ChecklistItem(models.Model):
+    name = models.CharField(max_length=100)
+
+    def _str_(self):
+        return self.name

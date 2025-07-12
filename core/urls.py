@@ -23,6 +23,8 @@ urlpatterns = [
     path('student/', include('studentip.urls')),
     path('fpassword/',include('forgot.urls')),
     path('f_input/', include('faculty_input.urls')),
+    path('fdash/', include('facultydash.urls')),
     path('otp/',include('otp.urls')),
     path('details/',include('sdetailsdash.urls')),
+    path('fdetails/',include('fdetailsdash.urls')),
 ]

@@ -1,3 +1,4 @@
+## forgot/views.py
 import random
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password
@@ -8,7 +9,7 @@ from core.models import Student, Faculty
 
 otp_store = {}  # key: email, value: otp
 
-
+    
 class SendOTP(APIView):
     def post(self, request):
         email = request.data.get('email')
