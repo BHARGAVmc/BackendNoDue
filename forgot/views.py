@@ -6,10 +6,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from core.models import Student, Faculty
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 otp_store = {}  # key: email, value: otp
 
-    
+
+
+@method_decorator(csrf_exempt, name='dispatch')
 class SendOTP(APIView):
     def post(self, request):
         email = request.data.get('email')
@@ -23,7 +27,7 @@ class SendOTP(APIView):
             send_mail(
                 subject='Your OTP Code',
                 message=f'Your OTP is {otp}',
-                from_email='noreply@example.com',
+                from_email=None,
                 recipient_list=[email],
                 fail_silently=False,
             )
@@ -31,6 +35,7 @@ class SendOTP(APIView):
             return Response({"error": f"Failed to send email: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
+
 
 
 class VerifyOTP(APIView):

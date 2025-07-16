@@ -55,6 +55,8 @@ class StudentDashboardSubjectsView(APIView):
                 requirements.append({
                     "requirement_type": req.requirement_type,
                     "is_completed": req.is_completed,
+                    "soft_copy_required": req.soft_copy_required,
+                    "hard_copy_required": req.hard_copy_required,
                     "remarks": req.remarks
                 })
 
