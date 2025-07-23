@@ -50,7 +50,7 @@ from .models import StudentRequirementStatus
 
 class StudentRequirementStatusSerializer(serializers.ModelSerializer):
     # This will handle file uploads
-    certificate_file = serializers.FileField(required=False, allow_null=True)
+    soft_copy_file = serializers.SerializerMethodField()
 
     class Meta:
         model = StudentRequirementStatus
@@ -61,6 +61,11 @@ class StudentRequirementStatusSerializer(serializers.ModelSerializer):
             'requirement_type',
             'is_completed',
             'remarks',
-            'certificate_file',
+            'soft_copy_file',
+            'soft_copy_submitted', 
+            'hard_copy_submitted',
         ]
-
+    def get_soft_copy_file(self, obj):
+        if obj.soft_copy_file:
+            return obj.soft_copy_file.url  
+        return None

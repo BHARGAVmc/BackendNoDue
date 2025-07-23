@@ -1,6 +1,4 @@
-from django.db import models
-from facultydash.models import FacultySubject
-from core.models import Student
+
 
 # class StudentRequirementStatus(models.Model):
 #     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -16,6 +14,10 @@ from core.models import Student
 
 #     def __str__(self):
 #         return f"{self.student.roll_no} - {self.requirement_type} ({'✔' if self.is_completed else '✘'})"
+from django.db import models
+from facultydash.models import FacultySubject
+from core.models import Student
+
 
 class StudentRequirementStatus(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -23,14 +25,13 @@ class StudentRequirementStatus(models.Model):
     requirement_type = models.CharField(max_length=100)
     is_completed = models.BooleanField(default=False)
     remarks = models.TextField(blank=True, null=True)
-    
     # Certificate additions
-    certificate_file = models.FileField(upload_to='certificates/', null=True, blank=True)  # Keep for backward compatibility
-
+    # certificate_file = models.FileField(upload_to='certificates/', null=True, blank=True)  # Keep for backward compatibility
     soft_copy_required = models.BooleanField(default=False)
     hard_copy_required = models.BooleanField(default=False)
-
     soft_copy_file = models.FileField(upload_to='certificates/soft/', null=True, blank=True)
+    # hard_copy_submitted = models.BooleanField(default=False)
+    soft_copy_submitted = models.BooleanField(default=False)
     hard_copy_submitted = models.BooleanField(default=False)
 
     class Meta:

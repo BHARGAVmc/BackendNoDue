@@ -57,6 +57,8 @@ class StudentDashboardSubjectsView(APIView):
                     "is_completed": req.is_completed,
                     "soft_copy_required": req.soft_copy_required,
                     "hard_copy_required": req.hard_copy_required,
+                    "soft_copy_completed": req.soft_copy_submitted,
+                    "hard_copy_completed": req.hard_copy_submitted,
                     "remarks": req.remarks
                 })
 

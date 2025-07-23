@@ -11,14 +11,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+# from decouple import config
 import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+X_FRAME_OPTIONS = 'ALLOWALL'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -45,7 +46,6 @@ INSTALLED_APPS = [
     'studentip',
     'sdetailsdash',
     'corsheaders', 
-    'otp',
     'forgot',
     'faculty_input',
     'facultydash',
@@ -62,6 +62,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'core.middleware.allow_iframe.AllowIframeMiddleware',
+    'core.middleware.allow_pdf_iframe.AllowPDFIframeMiddleware',
+
     
 ]
 
@@ -170,3 +173,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'nodue.network@gmail.com'  # your Gmail ID
 EMAIL_HOST_PASSWORD = 'xifecgypdcvxadzn'  # 16-character app password
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

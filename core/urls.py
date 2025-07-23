@@ -26,10 +26,9 @@ urlpatterns = [
     path('forgot/',include('forgot.urls')),
     path('f_input/', include('faculty_input.urls')),
     path('fdash/', include('facultydash.urls')),
-    path('otp/',include('otp.urls')),
     path('details/',include('sdetailsdash.urls')),
-   path('fdetails/', include('fdetailsdash.urls')),
-]
+    path('fdetails/', include('fdetailsdash.urls')),
+] 
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

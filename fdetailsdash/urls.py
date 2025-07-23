@@ -10,7 +10,8 @@ from django.urls import path
 #       path('get-certificate/', get_certificate, name='get_certificate'),
 
 # ]
-
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import (
     get_student_data_and_requirements,
     add_requirement_for_class,
@@ -18,7 +19,7 @@ from .views import (
     delete_requirement_for_class,
     upload_certificate_v2,
     get_certificate,
-    update_certificate_requirement_type
+    update_certificate_requirement_type,
 )
 
 urlpatterns = [
@@ -27,6 +28,6 @@ urlpatterns = [
     path('update-requirements/', update_student_requirements),
     path('delete-requirement/', delete_requirement_for_class),
     path('upload-certificate-v2/', upload_certificate_v2),
-    path('get-certificate/', get_certificate),
+    path('get-certificate/', get_certificate, name='get_certificate'),
     path('update-certificate-type/', update_certificate_requirement_type),
 ]

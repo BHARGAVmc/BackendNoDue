@@ -304,10 +304,14 @@ from django.utils.decorators import method_decorator
 from django.http import JsonResponse, FileResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 import json
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from core.models import Student, Faculty
 from facultydash.models import FacultySubject
 from fdetailsdash.models import StudentRequirementStatus
+from django.http import FileResponse, HttpResponseNotFound
+from fdetailsdash.models import StudentRequirementStatus
+import os
 
 @csrf_exempt
 def get_student_data_and_requirements(request):
@@ -364,6 +368,7 @@ def get_student_data_and_requirements(request):
                             'soft_copy_required': req.soft_copy_required,
                             'hard_copy_required': req.hard_copy_required,
                             'soft_copy_uploaded': bool(req.soft_copy_file),
+                            'soft_copy_file': req.soft_copy_file.url if req.soft_copy_file else '',
                             'hard_copy_submitted': req.hard_copy_submitted,
                         })
                     except StudentRequirementStatus.DoesNotExist:
@@ -447,6 +452,49 @@ def add_requirement_for_class(request):
 
     return JsonResponse({'error': 'Only POST method allowed'}, status=405)
 
+# @csrf_exempt
+# def update_student_requirements(request):
+#     if request.method == 'POST':
+#         try:
+#             data = json.loads(request.body)
+#             email = data.get('email')
+#             updates = data.get('updates', [])
+
+#             if not email or not updates:
+#                 return JsonResponse({'success': False, 'message': 'Missing email or updates'}, status=200)
+
+#             faculty = Faculty.objects.get(email=email)
+
+#             for item in updates:
+#                 roll_no = item.get('roll_no')
+#                 subject_code = item.get('subject_code')
+#                 requirement_type = item.get('requirement_type')
+#                 is_completed = item.get('is_completed', False)
+#                 remarks = item.get('remarks', '')
+
+#                 student = Student.objects.get(roll_no=roll_no)
+#                 faculty_subject = FacultySubject.objects.get(
+#                     faculty=faculty,
+#                     subject_code=subject_code
+#                 )
+
+#                 StudentRequirementStatus.objects.update_or_create(
+#                     student=student,
+#                     faculty_subject=faculty_subject,
+#                     requirement_type=requirement_type,
+#                     defaults={
+#                         'is_completed': is_completed,
+#                         'remarks': remarks
+#                     }
+#                 )
+
+#             return JsonResponse({'success': True, 'message': 'Requirements updated successfully'}, status=200)
+
+#         except Exception as e:
+#             print("DEBUG ❗ Exception:", str(e))
+#             return JsonResponse({'success': False, 'message': str(e)}, status=200)
+
+#     return JsonResponse({'success': False, 'message': 'Only POST method allowed'}, status=405)
 
 @csrf_exempt
 def update_student_requirements(request):
@@ -457,7 +505,7 @@ def update_student_requirements(request):
             updates = data.get('updates', [])
 
             if not email or not updates:
-                return JsonResponse({'error': 'Missing email or updates'}, status=400)
+                return JsonResponse({'success': False, 'message': 'Missing email or updates'}, status=200)
 
             faculty = Faculty.objects.get(email=email)
 
@@ -468,28 +516,36 @@ def update_student_requirements(request):
                 is_completed = item.get('is_completed', False)
                 remarks = item.get('remarks', '')
 
+                # ✅ New fields
+                soft_copy_submitted = item.get('soft_copy_submitted', False)
+                hard_copy_submitted = item.get('hard_copy_submitted', False)
+
                 student = Student.objects.get(roll_no=roll_no)
                 faculty_subject = FacultySubject.objects.get(
                     faculty=faculty,
                     subject_code=subject_code
                 )
 
+                # ✅ update or create
                 StudentRequirementStatus.objects.update_or_create(
                     student=student,
                     faculty_subject=faculty_subject,
                     requirement_type=requirement_type,
                     defaults={
                         'is_completed': is_completed,
-                        'remarks': remarks
+                        'remarks': remarks,
+                        'soft_copy_submitted': soft_copy_submitted,
+                        'hard_copy_submitted': hard_copy_submitted,
                     }
                 )
 
-            return JsonResponse({'success': True, 'message': 'Requirements updated successfully'})
+            return JsonResponse({'success': True, 'message': 'Requirements updated successfully'}, status=200)
 
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+            print("DEBUG ❗ Exception:", str(e))
+            return JsonResponse({'success': False, 'message': str(e)}, status=200)
 
-    return JsonResponse({'error': 'Only POST method allowed'}, status=405)
+    return JsonResponse({'success': False, 'message': 'Only POST method allowed'}, status=405)
 
 
 @csrf_exempt
@@ -529,42 +585,6 @@ def delete_requirement_for_class(request):
 
     return JsonResponse({'error': 'Only POST method allowed'}, status=405)
 
-
-# @csrf_exempt
-# @require_POST
-# def upload_certificate_v2(request):
-#     roll_no = request.POST.get('roll_no')
-#     subject_code = request.POST.get('subject_code')
-#     requirement_type = request.POST.get('requirement_type')
-#     email = request.POST.get('email')
-#     upload_type = request.POST.get('upload_type')  # soft or hard
-
-#     try:
-#         student = Student.objects.get(roll_no=roll_no)
-#         faculty = Faculty.objects.get(email=email)
-#         faculty_subject = FacultySubject.objects.get(faculty=faculty, subject_code=subject_code)
-
-#         req = StudentRequirementStatus.objects.get(
-#             student=student,
-#             faculty_subject=faculty_subject,
-#             requirement_type=requirement_type
-#         )
-
-#         if upload_type == 'soft':
-#             file = request.FILES.get('certificate_file') 
-#             if not file:
-#                 return JsonResponse({'error': 'Missing soft copy file'}, status=400)
-#             req.soft_copy_file = file
-#         elif upload_type == 'hard':
-#             req.hard_copy_submitted = True
-#         else:
-#             return JsonResponse({'error': 'Invalid upload_type'}, status=400)
-
-#         req.save()
-#         return JsonResponse({'success': True, 'message': 'Upload updated'})
-
-#     except Exception as e:
-#         return JsonResponse({'error': str(e)}, status=400)
 @csrf_exempt
 @require_POST
 def upload_certificate_v2(request):
@@ -591,7 +611,7 @@ def upload_certificate_v2(request):
                 return JsonResponse({'error': 'Missing soft copy file'}, status=400)
 
             req.soft_copy_file = file
-            req.is_completed = True  
+            req.is_completed = False  
         elif upload_type == 'hard':
             req.hard_copy_submitted = True
             req.is_completed = True  
